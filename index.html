@@ -413,7 +413,28 @@
       const baseY = 103;
       picks.forEach((p, i) => {
         const y = baseY + i * 157;
-        ctx.fillStyle = theme.ink; ctx.font = '700 48px system-ui, "Noto Sans JP"'; labelText(p, 432, y, theme.ink);
+        ctx.fillStyle = theme.ink;
+
+        // 数字とテキストを分離 (数字 + スペース + テキスト)
+        const match = p.match(/^(\d+)[\s\u00A0\u3000]+(.+)$/);
+        if (match) {
+          const num = match[1];
+          const text = match[2];
+
+          // 数字 (48px)
+          ctx.font = '700 48px system-ui, "Noto Sans JP"';
+          ctx.fillText(num, 432, y);
+
+          // テキスト (32px) - 数字の幅 + 余白
+          const numWidth = ctx.measureText(num).width;
+          const gap = 40; // スペースの代わり
+          ctx.font = '700 32px system-ui, "Noto Sans JP"';
+          ctx.fillText(text, 432 + numWidth + gap, y);
+        } else {
+          // フォールバック
+          ctx.font = '700 48px system-ui, "Noto Sans JP"';
+          ctx.fillText(p, 432, y);
+        }
       });
 
       // フッター（ID・ニックネーム・発行時刻）
